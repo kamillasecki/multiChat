@@ -1,0 +1,95 @@
+<html lang="en">
+
+<head>
+  <title>Chat Example</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <script src="/js/crypto-js/aes.js"></script>
+  <script src="/js/crypto-js/pbkdf2.js"></script>
+  <script src="/js/crypto-js/crypto-js.js"></script>
+
+  <style>
+    body {
+      padding-top: 60px;
+    }
+  </style>
+
+</head>
+
+<body ng-app="chatApp" ng-controller="ChatController">
+  <div class="container">
+    <div class="page-header">
+      <h1>Hello:</h1>
+      <div>
+        <span class="uname"><% if (user.local.name) { %><%= (user.local.name) %><% } else { if (user.facebook.name) { %><%= (user.facebook.name) %><% } else { if (user.google.name) { %><%= (user.google.name) %><% }}} %></span>
+        <span class="uid"><%= (user._id) %></span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">
+        <ul class="nav nav-list well">
+          <li class="nav-header">Local Users</li>
+          <li ng-repeat="user in roster">
+            <span ng-bind="user.name"></span>
+            <button type="button" class="btn btn-default btn-xs" ng-click="newRoom(user.id,user.name)">
+            <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
+            </button>
+          </li>
+        </ul>
+        <form>
+          <fieldset>
+            <label>Secret phrase:</label>
+            <input type="text" placeholder="enter phase to generate key" ng-model="secret" ng-change="encrypt(text, secret)">
+          </fieldset>
+        </form>
+      </div>
+      <div class="col-md-9">
+        <div>
+
+          <!-- Nav tabs -->
+          <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Home</a></li>
+          </ul>
+
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="home">
+              <table class="table table-striped table-bordered">
+                <thead>
+                  <tr>
+                    <th class="col-md-2">Name</th>
+                    <th class="col-md-7">Message</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="msg in messages | filter:{roomId:'main'}">
+                    <td class="col-md-2">
+                      <p>{{msg.name}}:</p>
+                      <p>
+                        <h6><small>{{msg.time}}</small></h6>
+                      </p>
+                    </td>
+                    <td class="col-md-7">{{msg.text}}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="row">
+                <form ng-submit="send()" class="col-md-12">
+                  <input class="form-control col-md-9" ng-model="text" placeholder="Message" type="text">
+                  <button class="btn btn-primary col-md-3" ng-disabled="!text" type="submit">Send</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src="/js/angular.min.js"></script>
+</body>
+<script src="/js/script.js"></script>
+
+</html>
